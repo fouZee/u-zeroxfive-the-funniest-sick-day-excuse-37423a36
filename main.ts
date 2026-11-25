@@ -7,7 +7,7 @@ import { mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ENTRY =
-  "Morning, I won't be in — I slept on my arm so wrong it's still asleep, and honestly it's earned the day off more than I have.";
+  "Sorry, can't come in — my washing machine flooded the kitchen at 6am and I'm currently bailing out the flat with a soup ladle.";
 
 function validate(entry: string): void {
   if (entry.length < 1 || entry.length > 200) {
@@ -18,6 +18,20 @@ function validate(entry: string): void {
   }
   if (entry.includes("\n")) {
     throw new Error("entry must be a single line");
+  }
+  if (entry !== entry.trim()) {
+    throw new Error("entry must not have leading or trailing whitespace");
+  }
+  // Judge brief: the idea must be fresh, not a worn excuse about a fever,
+  // a dog, or a dead grandmother. Reject those tropes outright.
+  const worn = ["fever", "dog", "grandmother", "grandma"];
+  for (const word of worn) {
+    if (entry.toLowerCase().includes(word)) {
+      throw new Error(`entry uses a worn trope: ${word}`);
+    }
+  }
+  if (!/[.!?]$/.test(entry)) {
+    throw new Error("entry must end with terminal punctuation");
   }
 }
 
